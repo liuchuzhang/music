@@ -1,0 +1,43 @@
+kind: pipeline
+type: docker
+name: default
+
+steps:
+- name: node-build
+  image: liuchuzhang/node-pnpm
+  commands:
+    - pnpm install
+    - pnpm run build
+
+- name: docker-build  
+  image: plugins/docker
+  settings:
+    repo: liuchuzhang/blue-music
+    tags: latest
+    username:
+      from_secret: docker_username
+    password:
+      from_secret: docker_password
+
+- name: deploy
+  image: appleboy/drone-ssh
+  environment:
+    SSH_DEPLOY_SHELL:
+      from_secret: ssh_deploy_shell
+  settings:
+    host:
+      from_secret: ssh_host
+    port:
+      from_secret: ssh_port
+    username:
+      from_secret: ssh_username
+    password:
+      from_secret: ssh_password
+    envs:
+      - ssh_deploy_shell
+    script:
+      - $SSH_DEPLOY_SHELL -d music -e liuchuzhang/blue-music -i music-web
+
+trigger:
+  branch:
+    - main
