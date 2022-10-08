@@ -1,5 +1,6 @@
 import { getParameterByName } from './utils'
 import axios from 'axios'
+import async from 'async'
 
 export class kugou {
   static kg_convert_song(song) {
@@ -49,14 +50,14 @@ export class kugou {
   static kg_render_search_result_item(index, item, params, callback) {
     const track = kugou.kg_convert_song(item);
     // Add singer img
-    const url = `${'https://www.kugou.com/yy/index.php?r=play/getdata&hash='}${
-      track.lyric_url
-    }`;
-    axios.get(url).then((response) => {
-      const { data } = response;
-      track.img_url = data.data.img;
-      callback(null, track);
-    });
+    // const url = `${'https://www.kugou.com/yy/index.php?r=play/getdata&hash='}${
+    //   track.lyric_url
+    // }`;
+    // axios.get(url).then((response) => {
+    //   const { data } = response;
+    //   track.img_url = data.data.img;
+    // });
+    callback(null, track);
   }
 
   static search(url) {
@@ -279,7 +280,7 @@ export class kugou {
   static bootstrap_track(track, success, failure) {
     const track_id = track.id.slice('kgtrack_'.length);
     const album_id = track.album_id.slice('kgalbum_'.length);
-    let target_url = `https://wwwapi.kugou.com/yy/index.php?r=play/getdata&callback=jQuery&mid=1&hash=${track_id}&platid=4`;
+    let target_url = `/api/wwwapikugou/yy/index.php?r=play/getdata&callback=jQuery&mid=1&hash=${track_id}&platid=4`;
     if (album_id !== '') {
       target_url += `&album_id=${album_id}`;
     }
@@ -306,7 +307,7 @@ export class kugou {
   static lyric(url) {
     const track_id = getParameterByName('track_id', url).split('_').pop();
     const album_id = getParameterByName('album_id', url).split('_').pop();
-    let lyric_url = `https://wwwapi.kugou.com/yy/index.php?r=play/getdata&callback=jQuery&mid=1&hash=${track_id}&platid=4&album_id=${album_id}`;
+    let lyric_url = `/api/wwwapikugou/yy/index.php?r=play/getdata&callback=jQuery&mid=1&hash=${track_id}&platid=4&album_id=${album_id}`;
     const timstamp = +new Date();
     lyric_url += `&_=${timstamp}`;
     return {

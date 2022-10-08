@@ -1,5 +1,5 @@
 <template>
-  <Search v-model="searchValue" placeholder="请输入歌曲名" @change="search" />
+  <Search v-model="searchValue" placeholder="请输入歌曲名" @search="search" />
   <ul class="list">
     <li v-for="item in list" :key="item.id" @click="handleItemClick(item)">
       <div class="item">
@@ -34,7 +34,8 @@ const getColor = (source) => {
       netease: '#d43c33',
       qq: '#31c27c',
       kuwo: '#ffe443',
-      migu: '#e40077'
+      migu: '#e40077',
+      kugou: '#00A9FF'
     }[source] || 'gray'
   )
 }
@@ -44,13 +45,14 @@ const getSource = (source) => {
       netease: '网易云',
       qq: 'qq',
       kuwo: '酷我',
+      kugou: '酷狗',
       migu: '咪咕'
     }[source] || source
   )
 }
 
 const search = (e) => {
-  const keywords = e.target.value
+  const keywords = searchValue.value
   console.log(keywords)
   if (!keywords) {
     return Toast('请输入内容')
