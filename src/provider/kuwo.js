@@ -307,15 +307,16 @@ export class kuwo {
   static bootstrap_track(track, success, failure) {
     const sound = {}
     const song_id = track.id.slice('kwtrack_'.length)
-    const target_url = '/api/antiserverkuwo/anti.s?' + `type=convert_url&format=mp3&response=url&rid=${song_id}`
+    // const target_url = '/api/antiserverkuwo/anti.s?' + `type=convert_url&format=mp3&response=url&rid=${song_id}`
+    const target_url = `api/kuwo/api/v1/www/music/playUrl?mid=${song_id}&type=convert_url3&br=128kmp3`;
     /* const target_url = '/api/kuwo/url?'
       + `format=mp3&rid=${song_id}&response=url&type=convert_url3&br=128kmp3&from=web`;
     https://m.kuwo.cn/newh5app/api/mobile/v1/music/src/${song_id} */
 
     axios.get(target_url).then((response) => {
       const { data } = response
-      if (data.length > 0) {
-        sound.url = data.replace(/(http):\/\/([a-z]+)\.(sycdn)\.(kuwo)\.cn/g, `${location.origin}/api/$2$3$4`)
+      if (data && data.data && data.data.url) {
+        sound.url = data.data.url.replace(/(http):\/\/([a-z]+)\.(sycdn)\.(kuwo)\.cn/g, `${location.origin}/api/$2$3$4`)
         sound.platform = 'kuwo'
 
         success(sound)
